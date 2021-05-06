@@ -23,20 +23,21 @@ export default function(api) {
             if (!route.component) {
                 throw new Error(`"component" on ${route.path} can not be empty if multistage is true`);
             }
-            const outPath = path.join(TempDirName, 'wrapper', route.path.replace(/\//g, '.') + '.ts');
+            const outPath = path.join(TempDirName, 'wrapper', route.path.replace(/\//g, '-') + '.ts');
             const routePath = path.join(api.paths.absPagesPath || '', route.component);
             const exists = fs.existsSync(path.join(tempDirPath,outPath));
-            if(exists)return;
-            api.writeTmpFile({
-                path: outPath,
-                content: api.utils.Mustache.render(
-                    fs.readFileSync(path.join(__dirname, './tpl/wrapper.tpl'), 'utf-8')
-                    , {
-                        route: winPath(routePath),
-                        decorator: winPath(path.join('@@', DecoratorPath)),
-                        opt: typeof route.multistage === 'object' ? JSON.stringify(route.multistage) : undefined,
-                    }),
-            });
+            if(!exists) {
+                api.writeTmpFile({
+                    path: outPath,
+                    content: api.utils.Mustache.render(
+                        fs.readFileSync(path.join(__dirname, './tpl/wrapper.tpl'), 'utf-8')
+                        , {
+                            route: winPath(routePath),
+                            decorator: winPath(path.join('@@', DecoratorPath)),
+                            opt: typeof route.multistage === 'object' ? JSON.stringify(route.multistage) : undefined,
+                        }),
+                });
+            }
             route.component = winPath(path.join(tempDirPath, outPath));
         }
     });
