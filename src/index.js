@@ -23,7 +23,6 @@ export default function(api) {
             if (!route.component) {
                 throw new Error(`"component" on ${route.path} can not be empty if multistage is true`);
             }
-            console.log('write');
             const outPath = path.join(TempDirName, 'wrapper', route.path.replace(/\//g, '.') + '.ts');
             const routePath = path.join(api.paths.absPagesPath || '', route.component);
             const exists = fs.existsSync(path.join(tempDirPath,outPath));
