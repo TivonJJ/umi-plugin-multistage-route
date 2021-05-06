@@ -9,7 +9,7 @@
 
 multistage: boolean | {forceRender:boolean}
 
-```json
+``` json
 {
   path: 'multistage-routes',
   component: './demo/components/multistage-routes/index',
