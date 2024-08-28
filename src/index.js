@@ -1,44 +1,59 @@
-import path from 'path';
-import winPath from 'slash2';
+import { Mustache } from '@umijs/utils';
 import fs from 'fs';
+import path from 'path';
+import { winPath } from 'umi/plugin-utils';
 
-const TempDirName = 'plugin-multistage-route';
+const PluginKey = 'multistage-route';
 
-export default function(api) {
-    const tempDirPath = api.paths.absTmpPath || '';
-    const DecoratorPath = path.join(TempDirName, 'decorator.tsx');
-    api.onGenerateFiles(() => {
-        const exists = fs.existsSync(path.join(tempDirPath,DecoratorPath));
-        if(exists)return;
+export default function (api) {
+    const tempDirPath = api.paths.absTmpPath;
+    const decoratorPath = path.join(PluginKey, 'decorator.tsx');
+    const wrappedRoutes = [];
+
+    api.describe({
+        key: PluginKey,
+    });
+
+    api.onGenerateFiles(async () => {
+        const exists = fs.existsSync(path.join(tempDirPath, decoratorPath));
+        if (exists) return;
         api.writeTmpFile({
-            path: DecoratorPath,
-            content: fs.readFileSync(path.join(__dirname, './tpl/decorator.tpl'), 'utf-8'),
+            path: 'decorator.tsx',
+            content: fs.readFileSync(path.join(__dirname, './tpl/decorator.tsx'), 'utf-8'),
+        });
+        wrappedRoutes.forEach((item) => {
+            api.writeTmpFile({
+                path: item.path,
+                content: item.content,
+            });
         });
     });
-    api.onPatchRouteBefore(({ route }) => {
+
+    api.onPatchRoute(async ({ route }) => {
         if (route.multistage && route.path) {
-            if (!route.routes || !route.routes.length) {
-                throw new Error(`"routes" on ${route.path} can not be empty if multistage is true`);
-            }
-            if (!route.component) {
-                throw new Error(`"component" on ${route.path} can not be empty if multistage is true`);
-            }
-            const outPath = path.join(TempDirName, 'wrapper', route.path.replace(/\//g, '-').replace(/\:|\*|\?/,'') + '.ts');
-            const routePath = path.join(api.paths.absPagesPath || '', route.component);
-            const exists = fs.existsSync(path.join(tempDirPath,outPath));
-            if(!exists) {
-                api.writeTmpFile({
-                    path: outPath,
-                    content: api.utils.Mustache.render(
-                        fs.readFileSync(path.join(__dirname, './tpl/wrapper.tpl'), 'utf-8')
-                        , {
-                            route: winPath(routePath),
-                            decorator: winPath(path.join('@@', DecoratorPath)),
-                            opt: typeof route.multistage === 'object' ? JSON.stringify(route.multistage) : undefined,
-                        }),
-                });
-            }
-            route.component = winPath(path.join(tempDirPath, outPath));
+            const outFileName =
+                route.absPath.replace(/\//g, '-').replace(/:/, '_').replace(/^-/, '') + '.ts';
+            const outPath = path.join('wrapper', outFileName);
+
+            const routePath = route.file;
+            if (!routePath) throw new Error('route.file is invalid');
+
+            wrappedRoutes.push({
+                path: outPath,
+                content: Mustache.render(
+                    fs.readFileSync(path.join(__dirname, './tpl/wrapper.tpl'), 'utf-8'),
+                    {
+                        route: winPath(routePath),
+                        decorator: winPath(path.join(tempDirPath, 'plugin-' + decoratorPath)),
+                        opt:
+                            typeof route.multistage === 'object'
+                                ? JSON.stringify(route.multistage)
+                                : undefined,
+                    },
+                ),
+            });
+            route.file = winPath(path.join(tempDirPath, 'plugin-' + PluginKey, outPath));
         }
+        return route;
     });
 }
