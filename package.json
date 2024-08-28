@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@umijs/utils": "^4.3.17",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0"
   },

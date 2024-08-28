@@ -1,7 +1,6 @@
-import { Mustache } from '@umijs/utils';
+import { Mustache,winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
-import { winPath } from 'umi/plugin-utils';
 
 const PluginKey = 'multistage-route';
 
