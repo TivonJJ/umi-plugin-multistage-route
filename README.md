@@ -1,22 +1,27 @@
+<!-- @format -->
+
 # umi-plugin-multistage-route
+多级路由装饰器，利用show和hide来保存父路由状态
 
-[![NPM version](https://img.shields.io/npm/v/umi-plugin-multistage-route.svg?style=flat)](https://npmjs.com/package/umi-plugin-multistage-route)
-[![NPM downloads](http://img.shields.io/npm/dm/umi-plugin-multistage-route.svg?style=flat)](https://npmjs.com/package/umi-plugin-multistage-route)
+## Usage
 
-## Install
+在routes配置中,多极路由的父路由上增加属性multistage
 
-```bash
-$ npm install
+multistage: boolean | {forceRender:boolean}
+
 ```
-
-```bash
-$ npm run dev
-$ npm run build
+{
+  path: 'multistage-routes',
+  component: './demo/components/multistage-routes/index',
+  multistage: true,
+  routes: [
+    {
+      path: 'second',
+      component: './demo/components/multistage-routes/second/index',
+    }
+  ]
+}
 ```
-
-## Options
-
-TODO
 
 ## LICENSE
 
