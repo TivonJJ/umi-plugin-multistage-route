@@ -31,7 +31,7 @@ export default function (api) {
           });
           api.writeTmpFile({
             path: 'index.ts',
-            content: "\nexport {MultistageRoute} from 'umi-plugin-multistage-route/types.d.ts';\n"
+            content: "\nexport {MultistageRoute} from 'umi-plugin-multistage-route/dist/cjs/types.d.ts';\n"
           });
           wrappedRoutes.forEach(function (item) {
             api.writeTmpFile({
