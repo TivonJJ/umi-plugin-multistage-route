@@ -24,7 +24,7 @@ export default function (api: IApi) {
         api.writeTmpFile({
             path: 'index.ts',
             content: `
-export {Route} from 'umi-plugin-multistage-route/types.d.ts';
+export {MultistageRoute} from 'umi-plugin-multistage-route/types.d.ts';
 `,
         });
         wrappedRoutes.forEach((item) => {
@@ -53,7 +53,7 @@ export {Route} from 'umi-plugin-multistage-route/types.d.ts';
                     fs.readFileSync(path.join(__dirname, './tpl/wrapper.tpl'), 'utf-8'),
                     {
                         route: winPath(routePath),
-                        decorator: winPath(path.join(tempDirPath, 'plugin-' + decoratorPath)),
+                        decorator: winPath(path.join(api.paths.absTmpPath, 'plugin-' + decoratorPath.replace(/\.tpl$/, ''))),
                         opt:
                             typeof route.multistage === 'object'
                                 ? JSON.stringify(route.multistage)

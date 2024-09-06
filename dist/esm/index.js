@@ -72,7 +72,7 @@ export default function (api) {
               path: outPath,
               content: Mustache.render(fs.readFileSync(path.join(__dirname, './tpl/wrapper.tpl'), 'utf-8'), {
                 route: winPath(routePath),
-                decorator: winPath(path.join(tempDirPath, 'plugin-' + decoratorPath)),
+                decorator: winPath(path.join(api.paths.absTmpPath, 'plugin-' + decoratorPath.replace(/\.tpl$/, ''))),
                 opt: _typeof(route.multistage) === 'object' ? JSON.stringify(route.multistage) : undefined
               })
             });

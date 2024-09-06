@@ -80,7 +80,7 @@ export {Route} from 'umi-plugin-multistage-route/types.d.ts';
           import_fs.default.readFileSync(import_path.default.join(__dirname, "./tpl/wrapper.tpl"), "utf-8"),
           {
             route: (0, import_utils.winPath)(routePath),
-            decorator: (0, import_utils.winPath)(import_path.default.join(tempDirPath, "plugin-" + decoratorPath)),
+            decorator: (0, import_utils.winPath)(import_path.default.join(api.paths.absTmpPath, "plugin-" + decoratorPath.replace(/\.tpl$/, ""))),
             opt: typeof route.multistage === "object" ? JSON.stringify(route.multistage) : void 0
           }
         )
