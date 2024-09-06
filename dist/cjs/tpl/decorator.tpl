@@ -6,9 +6,7 @@ export type RuRouteWrapperConfig = {
     forceRender?: boolean;
 };
 
-const RouteRender: React.FC<PropsWithChildren<RuRouteWrapperConfig>> = (
-    props,
-) => {
+const RouteRender = (props: PropsWithChildren<RuRouteWrapperConfig>) => {
     const { children, onResume, forceRender = false } = props;
     const outlet = useOutlet();
     const isRoot = !outlet;
@@ -37,10 +35,7 @@ function createRouteWrapper(
 ) {
     return (props: any) => {
         return (
-            <RouteRender
-                forceRender={options.forceRender}
-                onResume={options.onResume}
-            >
+            <RouteRender forceRender={options.forceRender} onResume={options.onResume}>
                 <RootComponent {...props} />
             </RouteRender>
         );

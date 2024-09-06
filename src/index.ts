@@ -1,13 +1,14 @@
-import { Mustache,winPath } from '@umijs/utils';
+import { Mustache, winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
+import { IApi } from 'umi';
 
 const PluginKey = 'multistage-route';
 
-export default function (api) {
+export default function (api: IApi) {
     const tempDirPath = api.paths.absTmpPath;
-    const decoratorPath = path.join(PluginKey, 'decorator.tsx');
-    const wrappedRoutes = [];
+    const decoratorPath = path.join(PluginKey, 'decorator.tpl');
+    const wrappedRoutes: { path: string; content: string }[] = [];
 
     api.describe({
         key: PluginKey,
@@ -18,7 +19,13 @@ export default function (api) {
         if (exists) return;
         api.writeTmpFile({
             path: 'decorator.tsx',
-            content: fs.readFileSync(path.join(__dirname, './tpl/decorator.tsx'), 'utf-8'),
+            content: fs.readFileSync(path.join(__dirname, './tpl/decorator.tpl'), 'utf-8'),
+        });
+        api.writeTmpFile({
+            path: 'index.ts',
+            content: `
+export {Route} from 'umi-plugin-multistage-route/types.d.ts';
+`,
         });
         wrappedRoutes.forEach((item) => {
             api.writeTmpFile({
@@ -29,6 +36,9 @@ export default function (api) {
     });
 
     api.onPatchRoute(async ({ route }) => {
+        if (!route.name) {
+            route.name = route.path;
+        }
         if (route.multistage && route.path) {
             const outFileName =
                 route.absPath.replace(/\//g, '-').replace(/:/, '_').replace(/^-/, '') + '.ts';
