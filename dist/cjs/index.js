@@ -54,7 +54,7 @@ function src_default(api) {
     api.writeTmpFile({
       path: "index.ts",
       content: `
-export {Route} from 'umi-plugin-multistage-route/types.d.ts';
+export {MultistageRoute} from 'umi-plugin-multistage-route/types.d.ts';
 `
     });
     wrappedRoutes.forEach((item) => {

@@ -1,4 +1,4 @@
-export type Route<P extends Record<string, any> = {}> = {
+export type MultistageRoute<P extends Record<string, any> = {}> = {
     [key in keyof P]: P[key];
 } & {
     name?: string | undefined;
@@ -8,5 +8,5 @@ export type Route<P extends Record<string, any> = {}> = {
     redirect?: string | undefined;
     wrappers?: Array<string> | undefined;
     multistage?: boolean | { forceRender: boolean; };
-    routes?: Route<P>[];
+    routes?: MultistageRoute<P>[];
 };
